@@ -1,0 +1,8 @@
+./test 0 2 117 1 data/dota2/standard.csv 46325 46325 >> out/dota.out_02
+1 : init : 2.4 : 2 : 18746.7
+del
+del
+1 : loop 1 ：2 : 2 : 118900
+ end
+--> 142152 <--
+1 : <--

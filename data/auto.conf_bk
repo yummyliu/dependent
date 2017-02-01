@@ -1,9 +1,21 @@
+[cancer]
+insnum = 683
+cs_start = 1
+cs_end = 9
+ds = 10
+datafile = data/cancer-683/standard.csv
 [waveform]
 insnum = 5000
 cs_start = 1
 cs_end = 21 
 ds = 22
 datafile = data/waveform/standard.csv
+[letter]
+insnum = 20000
+cs_start = 2
+cs_end = 17
+ds = 1
+datafile = data/letter-20000/standard.csv
 [shuttle]
 insnum = 58000
 cs_start = 1
@@ -16,6 +28,18 @@ cs_start = 1
 cs_end = 23
 ds = 24
 datafile = data/credit/standard.csv
+[gas]
+insnum = 13910
+cs_start = 2
+cs_end = 129
+ds = 1
+datafile = data/gas/standard.csv
+[gene9]
+insnum = 203
+cs_start = 1
+cs_end = 12600
+ds = 12601
+datafile = data/gene9/standard.csv
 [gene12]
 insnum = 174
 cs_start = 1
@@ -28,9 +52,9 @@ cs_start = 1
 cs_end = 3312
 ds = 3313
 datafile = data/gene14/standard.csv
-[gas]
-insnum = 13910
+[dota]
+insnum = 92650
 cs_start = 2
-cs_end = 129
+cs_end = 117
 ds = 1
-datafile = data/gas/standard.csv
+datafile = data/dota2/standard.csv

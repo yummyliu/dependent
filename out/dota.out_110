@@ -1,0 +1,1 @@
+./test 1 2 117 1 data/dota2/standard.csv 9265 9265 >> out/dota.out_110

@@ -16,7 +16,7 @@ int main(int argc,char *argv[])
     string datafile = argv[5];
     int cons[cs_end-cs_start+1];
     for(int i=cs_start; i<=cs_end;i++)
-        cons[i-1]=i;
+        cons[i-cs_start]=i;
     int cslen = cs_end-cs_start+1;
 
     int initpart = atoi(argv[6]);

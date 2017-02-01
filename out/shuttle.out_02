@@ -1,0 +1,2 @@
+./test 0 1 9 10 data/shuttle/standard.csv 29000 29000 >> out/shuttle.out_02
+1 : 2 : 3 : 8 : 9 : init : 0.0950109 : 0.088221 : 2170.26

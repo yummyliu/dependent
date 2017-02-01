@@ -129,7 +129,7 @@ void printv(set<int>& r)
     }
 }
 
-static bool checkdel(DecisionT &d,const set<int> &redu, const set<int>::iterator &it,double initdep)
+static bool candel(DecisionT &d,const set<int> &redu, const set<int>::iterator &it,double initdep)
 {
     set<int> tmpredu = redu;
     tmpredu.erase(*it);
@@ -138,7 +138,6 @@ static bool checkdel(DecisionT &d,const set<int> &redu, const set<int>::iterator
     double tmpdep = Dependent(d,tmpredu,0);
 
     if(tmpdep>=initdep){
-        cout << "del" << endl;
         return true;
     }
     else
@@ -151,8 +150,9 @@ double pos_x(
        int ds,
        bool chuzao);
 
-bool notredundancy(int Bi, set<int>& redu, DecisionT& d, vector<double>& prepos)
+bool candel2(int Bi, set<int>& redu, DecisionT& d, vector<double>& prepos)
 {
+    redu.erase(Bi);
     for(size_t x = 0; x<prepos.size(); x++)
     {
         double newpos = pos_x(
@@ -162,10 +162,13 @@ bool notredundancy(int Bi, set<int>& redu, DecisionT& d, vector<double>& prepos)
                 d.getDs(),
                 true
                 );
-        if(newpos < prepos[x])
-            return true;
+        if(newpos < prepos[x]){
+            redu.insert(Bi);
+            return false;
+        }
     }
-    return false;
+    redu.insert(Bi);
+    return true;
 }
 void clearRedundancy2(
         DecisionT &d,
@@ -175,15 +178,31 @@ void clearRedundancy2(
 {
     set<int> B = redu;
     redu.clear();
-    set<int>::iterator it = redu.begin();
-    for(;it != redu.end();)
+    set<int>::iterator it = B.begin();
+    for(;it != B.end();)
     {
-        if(!notredundancy(*it,redu,d,prepos))
+        if(!candel2(*it,B,d,prepos))
             redu.insert(*it);
         ++it;
     }
 }
 void clearRedundancy(
+        DecisionT &d,
+        set<int>& redu,
+        double initdep
+        )
+{
+    set<int> B = redu;
+    redu.clear();
+    set<int>::iterator it = B.begin();
+    for(;it != B.end();)
+    {
+        if(!candel(d,B,it,initdep))
+            redu.insert(*it);
+        ++it;
+    }
+}
+void clearRedundancy0(
         DecisionT &d,
         set<int>& redu,
         double initdep
@@ -196,7 +215,7 @@ void clearRedundancy(
         set<int>::iterator it = redu.begin();
         for(;it != redu.end();)
         {
-            delflag = checkdel(d,redu,it,initdep);
+            delflag = candel(d,redu,it,initdep);
             if(!delflag)
             {
                 ++it;
@@ -331,10 +350,6 @@ double car_dep_plus(
             redu.end(),
             std::inserter(lef, lef.begin())
             );
-
-    clock_t start,finish;
-    double totaltime;
-
     // 计算加了Ux之后的全集dep
     auto& records = d.getrecords();
     double initdep = Dependentplus(
@@ -359,7 +374,6 @@ double car_dep_plus(
 
     d.addrecords(ib,gsize);
     // add ,get a attribute from lef
-    start = clock();
     while(lef.size()!=0)
     {
         // DEBUG
@@ -374,12 +388,8 @@ double car_dep_plus(
         else
             break;
     }
-    finish = clock();
-    totaltime=(double)(finish-start)/CLOCKS_PER_SEC;
-    // cout << "time 3: "<<totaltime << " , ";
 
-    //printv(redu);
-
+    clearRedundancy2(d,redu,prepos);
     return initdep;
 }
 
@@ -442,7 +452,7 @@ double icar_dep(
     }
 
     //clearRedundancy2(T,redu,curpos);
-    clearRedundancy(T,redu,curdep);
+    //clearRedundancy(T,redu,curdep);
     if (curit == records.end())
         cout << " end" <<endl;
 
@@ -499,7 +509,7 @@ double _icar_dep(
     }
 
     //clearRedundancy2(T,redu,curpos);
-    clearRedundancy(T,redu,curdep);
+    //clearRedundancy(T,redu,curdep);
     if (curit == records.end())
         cout << " end" <<endl;
 

@@ -1,0 +1,1 @@
+./test 1 2 129 1 data/gas/standard.csv 1391 1391 >> out/gas.out_110

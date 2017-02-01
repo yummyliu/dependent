@@ -1,8 +1,11 @@
 #coding:utf-8
-import os, time, sched, subprocess
+import os, time, sched
+import subprocess as sub
 import signal
 import warnings
 import ConfigParser
+import threading
+
 cf = ConfigParser.ConfigParser()
 schedule = sched.scheduler(time.time,time.sleep)
 
@@ -14,6 +17,37 @@ def killittask(name):
     cmd = getkillcmd(name)
     os.system(cmd)
     print time.ctime(),name,'killed'
+
+import errno
+
+def timeout( p ):
+    if p.poll() is None:
+        try:
+            p.kill()
+            print "kill it"
+        except OSError as e:
+            if e.errno != errno.ESRCH:
+                raise
+    else:
+        print "already stop"
+
+class RunCmd(threading.Thread):
+    def __init__(self, cmd, timeout):
+        threading.Thread.__init__(self)
+        self.cmd = cmd
+        self.timeout = timeout
+
+    def run(self):
+        self.p = sub.Popen(self.cmd,shell=True)
+        self.p.wait()
+
+    def Run(self):
+        self.start()
+        self.join(self.timeout)
+
+        if self.is_alive():
+            self.p.terminate()
+            self.join()
 
 if __name__ == '__main__':
     cf.read("data/auto.conf")
@@ -53,12 +87,7 @@ if __name__ == '__main__':
             f = open(outfile,"w")
             print >>f, task
             f.close()
-            proc = subprocess.Popen(task,shell=True,preexec_fn=os.setsid)
-            time.sleep(172800)
-            try:
-                os.killpg(proc.pid, signal.SIGTERM)
-            except OSError as e:
-                warnings.warn(e)
+            RunCmd(task,259200).Run()
 
 
         # 分组执行 增量算法
@@ -76,9 +105,4 @@ if __name__ == '__main__':
             f = open(outfile,"w")
             print >>f, task
             f.close()
-            proc = subprocess.Popen(task,shell=True,preexec_fn=os.setsid)
-            time.sleep(172800)
-            try:
-                os.killpg(proc.pid, signal.SIGTERM)
-            except OSError as e:
-                warnings.warn(e)
+            RunCmd(task,259200).Run()
